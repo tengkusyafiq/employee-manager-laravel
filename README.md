@@ -2,18 +2,26 @@
 
 ## TO DO
 ~~1. Migrations and seeding users.~~
+
 ~~2. User role relationship.~~
+
 ~~3. Boss route to do CRUD on users.~~
+
 4. API CRUD operation on `/boss` route, use `resource`. Remember, boss can create user!
 _See employeedata project_
+
 5. Pagination on index method in user controller. 
 _See employeedata project_
+
 6. Use transformer to only return name and email on index method.
 _See incremental API course._
+
 7. Input validation file. 
 _See Laravel 5 from scratch notes_
+
 8. Move from built in auth to Passport. 
 _No exact references yet. But can try since the docs is clear enough._
+
 9. CUD users with excel/csv files. 
 _No references yet!!!_
 
