@@ -19,3 +19,15 @@ DB_PASSWORD=
 ```
 
 ## Login and register using make:auth (not passport yet)
+For laravel >=6, latest:
+`composer require laravel/ui`
+`php artisan ui vue --auth`
+install node: https://nodejs.org/en/download/
+Must restart vs code.
+`npm install`
+`npm run dev`
+`php artisan migrate`
+Now the Login and register scaffold is done.
+
+## Make a role table to assign users
+Make Role model and migration with `php artisan make:model Role -m`
