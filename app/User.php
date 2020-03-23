@@ -40,4 +40,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Role');
     }
+
+    public function hasAnyRoles($roles) // for user that has multiple roles
+    {
+        return null !== $this->roles()->whereIn('name', $roles)->first();
+    }
+
+    public function hasAnyRole($role) // for user that has only one role
+    {
+        return null !== $this->roles()->where('name', $role)->first();
+    }
 }

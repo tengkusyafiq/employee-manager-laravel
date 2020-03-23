@@ -145,3 +145,54 @@ Then in `DatabaseSeeder.php`, add `$this->call(UsersTableSeeder::class);` so tha
 Now see your `users` table in your db, the roles should exists now.
 
 Now, if you see the `role_user` table, you can see that user id 1(Phillip) has role id 1(boss) and so on.
+
+## User role helper
+We create this to help use get user's roles soon.
+In User.php, make a function like below:
+```php
+    public function hasAnyRoles($roles) // for user that has multiple roles
+    {
+        return null !== $this->roles()->whereIn('name', $roles)->first();
+    }
+
+    public function hasAnyRole($role) // for user that has only one role
+    {
+        return null !== $this->roles()->where('name', $role)->first();
+    }
+```
+how it works:
+first function, we gonna pass in an array or roles,and get current user model, and we gonna see if any of our roles ar in name column. If doesn't have any, we return null.
+
+second function, also works the same way, except it only check if user has one role or not.
+
+## Protecting Routes by using roles, so only boss/admin can view all employees.
+We will use middleware to check wether the user is a boss or not to access a route.
+Make one:
+`php artisan make:middleware AccessBoss`
+
+Inside `handle` method, we gonna use helper method we made before, `hasAnyRole`, to see if the user has a role of `boss`.
+```php
+        if (Auth::user()->hasAnyRole('boss')) { // if the user is boss, return to next middleware.
+            return $next($request);
+        }
+
+        return redirect('home'); // if not boss, just redirect to home
+```
+Register this middleware in `Kernel.php` in routeMiddleware.
+```php
+    protected $routeMiddleware = [
+        ...
+        'auth.boss' => \App\Http\Middleware\AccessBoss::class,
+    ];
+```
+We call the middleware `auth.boss`.
+
+Okay to use this middleware in route, let say only boss can access `/boss`. Add the route in web.php:
+```php
+Route::get('/boss', function () {
+    return 'you are the boss';
+})->middleware(['auth', 'auth.boss'])->name('boss');
+```
+`auth` middleware makes the route only can be accessed by logged in user.
+`auth.boss` middleware makes the route only can be accessed by logged in boss.
+

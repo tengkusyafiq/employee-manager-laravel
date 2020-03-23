@@ -21,6 +21,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/boss', function () {
+    return 'you are the boss';
+})->middleware(['auth', 'auth.boss'])->name('boss');
