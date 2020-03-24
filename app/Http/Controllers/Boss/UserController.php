@@ -60,7 +60,7 @@ class UserController extends Controller
     {
         // user user click on edit on their own id, redirect back to index page.
         if (Auth::user()->id == $id) {
-            return redirect()->route('boss.users.index');
+            return redirect()->route('boss.users.index')->with('warning', 'You cannot edit yourself.');
         } // user can't edit themselves
 
         // if not, go to the edit page.
@@ -78,14 +78,14 @@ class UserController extends Controller
     {
         // user user click on edit on their own id, redirect back to index page.
         if (Auth::user()->id == $id) {
-            return redirect()->route('boss.users.index');
+            return redirect()->route('boss.users.index')->with('warning', 'You cannot edit yourself.');
         } // user can't edit themselves
 
         $user = User::find($id); // find users id
         // since in view we take an array (roles[]), we can use sync()
         $user->roles()->sync($request->roles);
 
-        return redirect()->route('boss.users.index');
+        return redirect()->route('boss.users.index')->with('success', 'Employee data has been updated.');
     }
 
     /**

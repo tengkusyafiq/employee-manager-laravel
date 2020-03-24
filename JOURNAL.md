@@ -365,6 +365,38 @@ After clicking the button, the input will be sent to update method. Let's make i
     }
 ```
 
+## Alerts
+The problem with our view is, there's no alert warning when user want to edit on his info. So he might be confused why he's being redirected back to the index. So we need to warn users.
+Make `views/partials/alerts.blade.php` and use this:
+```php
+@if(session('success'))
+    <div class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('warning'))
+    <div class="alert alert-warning" role="alert">
+        {{ session('warning') }}
+    </div>
+@endif
+
+```
+
+Call this partials in our `layouts/app` to be used in all of our views.
+```php
+        <main class="py-4 container">
+            @include('partials.alerts')
+            @yield('content')
+        </main>
+```
+
+Now to activate the alerts, edit our controller.
+```php
+            return redirect()->route('boss.users.index')->with('warning', 'You cannot edit yourself.');
+```
+Same way for `success` alert.
+
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk
 https://www.youtube.com/results?search_query=Laravel+api+Pagination+with+Filters
