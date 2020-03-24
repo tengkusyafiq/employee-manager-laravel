@@ -196,3 +196,107 @@ Route::get('/boss', function () {
 `auth` middleware makes the route only can be accessed by logged in user.
 `auth.boss` middleware makes the route only can be accessed by logged in boss.
 
+## CRUD operations on users as a boss
+Make a controller for that:
+`php artisan make:controller Boss\\UserController -r`
+to make a resource(-r) controller in Boss folder.
+
+Open up web.php to create the routes.
+```php
+Route::resource('/boss/users', 'Boss\UserController', [
+    'except' => ['show', 'create', 'store'],
+]);
+```
+But we want to add a prefix `boss` in front of the routes name and uri. We do that by:
+```php
+Route::namespace('Boss')->prefix('boss')->name('boss.')->group(function(){
+
+    Route::resource('/users', 'UserController', [
+    'except' => ['show', 'create', 'store'],
+    ]);
+
+});
+```
+If you notice, we don't put `boss` in `resource` anymore since it's also been taken care of.
+
+Now, we protect the resources so only boss can access. Just like we did before.
+```php
+Route::namespace('Boss')->prefix('boss')->middleware(['auth', 'auth.boss'])->name('boss.')->group(function(){
+
+    Route::resource('/users', 'UserController', [
+    'except' => ['show', 'create', 'store'],
+    ]);
+
+});
+
+```
+Now let's start viewing the employee(user) list. On app.blade.php,
+```php
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-items">
+                            <a href="{{ route('boss.users.index') }}">
+                                Manage Employees
+                            </a>
+                        </li>
+                    </ul>
+```
+For the index method in usercontroller:
+```php
+use App\User;
+
+    public function index(){
+        return view('boss.users.index')->with('users', User::all());
+    }
+```
+use with method to get all the users(User::all()) and send it in `users` variable.
+
+Now let's make view 'boss.users.index'. Make a `index.blade.php` in `views/boss`, and copy code from `home.blade.php` to start editing from it.
+
+Get table template from https://getbootstrap.com/docs/4.4/content/tables/ and put it in the blade view.
+```php
+                <div class="card-body">
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Roles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- loop through users here -->
+                        @foreach($users as $user)
+                            <tr>
+                                <th>{{ $user->name }}</th>
+                                <th>{{ $user->email }}</th>
+                                <th>{{ implode(', ', $user->roles()->get()->pluck('name')->toArray()) }}</th>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+
+                </div>
+```
+See for loop section. $user is passed from the controller, then each loop, we print name email and roles.
+Since a user might have multiple roles, we use:
+```php
+<th>{{ implode(', ', $user->roles()->get()->pluck('name')->toArray()) }}</th>
+```
+
+So if as a boss, he only can see this table.
+
+
+
+
+
+
+
+
+
+
+## Filter/search:
+https://www.youtube.com/watch?v=3PeF9UvoSsk
+https://www.youtube.com/results?search_query=Laravel+api+Pagination+with+Filters
+https://www.youtube.com/watch?v=KWnmOBkHzUo

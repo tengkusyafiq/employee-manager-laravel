@@ -24,3 +24,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/boss', function () {
     return 'you are the boss';
 })->middleware(['auth', 'auth.boss'])->name('boss');
+
+Route::namespace('Boss')->prefix('boss')->middleware(['auth', 'auth.boss'])->name('boss.')->group(function () {
+    Route::resource('/users', 'UserController', [
+        'except' => ['show', 'create', 'store'],
+    ]);
+});
