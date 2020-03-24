@@ -508,8 +508,24 @@ Let's go to the `manage employee` that we made before in our layout view.
 ```
 We pass string `boss` to our new `hasrole` so only user with role `boss` can view this.
 
+## Also delete user-role relationship when deleting user
+Before we just delete user in user table, but the role about the user is still present in our user role table.
 
+So, instead of using a simple `User::destroy($id);` we use:
+```php
+        // find user by id
+        $user = User::find($id);
 
+        if ($user) { // if user exists
+            $user->roles()->detach(); // find the roles in user role table, and detach/delete the row.
+            $user->delete(); // delete the user in user table.
+            // return success
+            return redirect()->route('boss.users.index')->with('success', 'Employee has been deleted.');
+        }
+        // if not, return failed.
+        return redirect()->route('boss.users.index')->with('warning', 'Employee cannot be deleted.');
+```
+Now if you delete a user, check if the user id is deleted also, in role_user table.
 
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk

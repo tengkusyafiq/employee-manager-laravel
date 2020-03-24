@@ -102,8 +102,16 @@ class UserController extends Controller
             return redirect()->route('boss.users.index')->with('warning', 'You cannot delete yourself.');
         } // user can't delete themselves
 
-        User::destroy($id);
+        // find user by id
+        $user = User::find($id);
 
-        return redirect()->route('boss.users.index')->with('success', 'Employee has been deleted.');
+        if ($user) { // if user exists
+            $user->roles()->detach(); // find the roles in user role table, and detach/delete the row.
+            $user->delete(); // delete the user in user table.
+            // return success
+            return redirect()->route('boss.users.index')->with('success', 'Employee has been deleted.');
+        }
+        // if not, return failed.
+        return redirect()->route('boss.users.index')->with('warning', 'Employee cannot be deleted.');
     }
 }
