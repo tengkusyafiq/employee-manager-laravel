@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('boss.users.index')->with('users', User::all());
+        return view('boss.users.index')->with('users', User::paginate(10));
     }
 
     /**

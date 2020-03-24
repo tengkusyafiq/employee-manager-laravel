@@ -427,6 +427,39 @@ Now let's edit the destroy method.
 ```
 Test it, should be okay.
 
+## Making fake users
+by default, laravel already make it for us in `UserFactory.php` but we nee to edit it so we can attach role for generated user.
+```php
+$factory->afterCreating(User::class, function ($user, $faker) {
+    $roles = Role::where('name', 'employee')->get(); //take employee Role
+    $user->roles()->sync($roles->pluck('id')->toArray()); // and attach it in the user role
+});
+```
+Now we add this functionality in our seeder.
+```php
+        DB::table('role_user')->truncate(); //also truncate role_user table
+        factory(App\User::class, 50)->create(); // create 50 users
+```
+Now run `php artisan db:seed` to run the seeder.
+
+# Pagination in index
+Instead of using `User::all()`, we can use `paginate(10)` for 10 users on each page.
+```php
+    public function index()
+    {
+        return view('boss.users.index')->with('users', User::paginate(10));
+    }
+
+```
+Then in our view, we need make the pagination buttons.
+Just add under table:
+```php
+<div class="row justify-content-center">
+    {{ $users->links() }}
+</div>
+```
+
+
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk
 https://www.youtube.com/results?search_query=Laravel+api+Pagination+with+Filters
