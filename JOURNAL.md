@@ -459,6 +459,57 @@ Just add under table:
 </div>
 ```
 
+## Dynamic view by roles
+We only want boss can view the button to go to `manage employee`.
+We do this by useing `providers`.
+Run `php artisan make:provider BladeExtraServicesProvider`.
+In the file, use `Blade`, `Auth`, and our user model.
+
+```php
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Blade;
+```
+
+In our boot function, we code our logic.
+```php
+    public function boot()
+    {
+        Blade::if('hasrole', function ($expression) { // expression will be a string we pass from the view
+            // check if any user logged in
+            if (Auth::user()) {
+                // checkif user hasAnyRole, then return true
+                if (Auth::user()->hasAnyRole($expression)) {
+                    return true;
+                }
+            }
+            // else return false
+            return false;
+        });
+    }
+```
+
+Now register the provider in our config/app.php under providers section.
+```php
+        App\Providers\BladeExtraServicesProvider::class,
+```
+
+Let's go to the `manage employee` that we made before in our layout view.
+```php
+<ul class="navbar-nav mr-auto">
+    @hasrole('boss')
+    <li class="nav-items">
+        <a href="{{ route('boss.users.ind}}">
+            Manage Employees
+        </a>
+    </li>
+    @endhasrole
+</ul>
+```
+We pass string `boss` to our new `hasrole` so only user with role `boss` can view this.
+
+
+
 
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk

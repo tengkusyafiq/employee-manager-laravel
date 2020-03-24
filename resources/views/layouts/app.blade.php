@@ -33,11 +33,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
+                        @hasrole('boss')
                         <li class="nav-items">
                             <a href="{{ route('boss.users.index') }}">
                                 Manage Employees
                             </a>
                         </li>
+                        @endhasrole
                     </ul>
 
                     <!-- Right Side Of Navbar -->
