@@ -7,11 +7,11 @@
 
 3. ~~Boss route to do CRUD on users.~~
 
-4. API CRUD operation on `/boss` route, use `resource`. Remember, boss can create user!
-_See employeedata project_
+4. ~~API CRUD operation on `/boss` route, use `resource`.
+_See employeedata project_~~
 
-5. Pagination on index method in user controller. 
-_See employeedata project_
+5. ~~Pagination on index method in user controller. 
+_See employeedata project_~~
 
 6. Use transformer to only return name and email on index method.
 _See incremental API course._
