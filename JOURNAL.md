@@ -527,6 +527,32 @@ So, instead of using a simple `User::destroy($id);` we use:
 ```
 Now if you delete a user, check if the user id is deleted also, in role_user table.
 
+## Add roles when creating user.
+When registering, user don't have any roles. To fix this, see Register controller.
+```php
+    protected function create(array $data)
+    {
+        // user input later
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+
+        // get employee role
+        $role = Role::select('id')->where('name', 'employee')->first();
+
+        // attach user with employee role
+        $user->roles()->attach($role);
+
+        // return the info
+        return $user;
+    }
+```
+Now registered user has default role:employee.
+
+
+
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk
 https://www.youtube.com/results?search_query=Laravel+api+Pagination+with+Filters
