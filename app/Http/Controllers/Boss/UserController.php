@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Boss;
 
 use App\Http\Controllers\Controller;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -56,6 +58,13 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        // user user click on edit on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index');
+        } // user can't edit themselves
+
+        // if not, go to the edit page.
+        return view('boss.users.edit')->with(['user' => User::find($id), 'roles' => Role::all()]);
     }
 
     /**
@@ -67,6 +76,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // user user click on edit on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index');
+        } // user can't edit themselves
+
+        $user = User::find($id); // find users id
+        // since in view we take an array (roles[]), we can use sync()
+        $user->roles()->sync($request->roles);
+
+        return redirect()->route('boss.users.index');
     }
 
     /**

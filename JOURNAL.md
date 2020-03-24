@@ -287,14 +287,83 @@ Since a user might have multiple roles, we use:
 
 So if as a boss, he only can see this table.
 
+## Edit users.
+Let's make boss can edit users' roles.
+Add edit button on new column in view.
+```php
+<th>
+    <!-- so that every button is each id -->
+    <a href="{{ route('boss.users$user->id) }}">
+        <button type="button" clabtn-primary btn-sm">
+            Edit
+        </button>
+    </a>
+</th>
+```
+Make a `boss/users/edit.blade.php`. The content, just copy from index blade and remove table.
 
+Leave it from now, and let's edit the edit controller.
+```php
+    public function edit($id)
+    {
+        // user user click on edit on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index');
+        } // user can't edit themselves
 
+        // if not, go to the edit page.
+        return view('boss.users.edit')->with(['user' => User::find($id), 'roles' => Role::all()]);
+    }
+```
 
+Now, if you logged in as phillip, you cant edit phillip.
 
+Let's edit the view.
+Simple header.
+```php
+<div class="card-header">Manage {{ $user->name }}</div>
+```
 
+Then we will use form to do update method, like we learn from laravel5fromscratch.
+```php
+                <div class="card-body">
+                    <form action="{{ route('boss.users.update', ['user'=>$user->id]) }}" method="POST">
+                        @csrf
+                        <!-- update method use PUT request -->
+                        {{ method_field('PUT') }}
+                        
+                        <!-- make a checkbox to select roles -->
+                        @foreach($roles as $role)
+                            <div class="form-check">
+                                <!-- check the box if user already has the role -->
+                                <input type="checkbox" name="roles[]" value="{{ $role->id }}" 
+                                    {{ $user->hasAnyRole($role->name)? 'checked':'' }}>
+                                <label>{{ $role->name }}</label>
+                                </input>
+                            </div>
+                        @endforeach
+                        <!-- Button to submit data to update method -->
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+```
 
+After clicking the button, the input will be sent to update method. Let's make it.
+```php
+    public function update(Request $request, $id)
+    {
+        // user user click on edit on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index');
+        } // user can't edit themselves
 
+        $user = User::find($id); // find users id
+        // since in view we take an array (roles[]), we can use sync()
+        $user->roles()->sync($request->roles);
 
+        return redirect()->route('boss.users.index');
+    }
+```
 
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk

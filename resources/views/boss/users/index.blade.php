@@ -13,7 +13,8 @@
                         <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Handle</th>
+                        <th scope="col">Roles</th>
+                        <th scope="col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -23,7 +24,14 @@
                                 <th>{{ $user->name }}</th>
                                 <th>{{ $user->email }}</th>
                                 <th>{{ implode(', ', $user->roles()->get()->pluck('name')->toArray()) }}</th>
-
+                                <th>
+                                    <!-- so that every button is link to each id -->
+                                    <a href="{{ route('boss.users.edit', $user->id) }}">
+                                        <button type="button" class="btn btn-primary btn-sm">
+                                            Edit
+                                        </button>
+                                    </a>
+                                </th>
                             </tr>
                         @endforeach
                     </tbody>
