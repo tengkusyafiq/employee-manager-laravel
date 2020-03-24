@@ -97,5 +97,13 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        // user user click on delete on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index')->with('warning', 'You cannot delete yourself.');
+        } // user can't delete themselves
+
+        User::destroy($id);
+
+        return redirect()->route('boss.users.index')->with('success', 'Employee has been deleted.');
     }
 }

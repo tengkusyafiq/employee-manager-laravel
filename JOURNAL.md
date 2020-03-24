@@ -397,6 +397,36 @@ Now to activate the alerts, edit our controller.
 ```
 Same way for `success` alert.
 
+## Delete user
+In index view, let's put delete button to delete the user like so.
+```php
+<!-- delete button submit to destroy method -->
+<form action="{{ route('boss.users.destroy', $use" method="POST" class="float-left">
+    {{ method_field('DELETE') }}
+    @csrf
+    <button type="submit" class="btn btn-danger btn-sm">
+        Delete
+    </button>
+</form>
+```
+
+Now let's edit the destroy method.
+```php
+    public function destroy($id)
+    {
+        // user user click on delete on their own id, redirect back to index page.
+        if (Auth::user()->id == $id) {
+            return redirect()->route('boss.users.index')->with('warning', 'You cannot delete yourself.');
+        } // user can't delete themselves
+
+        User::destroy($id);
+
+        return redirect()->route('boss.users.index')->with('success', 'Employee has been deleted.');
+    }
+}
+```
+Test it, should be okay.
+
 ## Filter/search:
 https://www.youtube.com/watch?v=3PeF9UvoSsk
 https://www.youtube.com/results?search_query=Laravel+api+Pagination+with+Filters
